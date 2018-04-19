@@ -4,7 +4,15 @@ module.exports = {
     return queryInterface.addColumn(
       'Todos',
       'todoGroupId',
-      Sequelize.INTEGER
+      {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'TodoGroups',
+          key: 'id',
+          as: 'todoGroupId',
+        },
+      }
     );
   },
   down: (queryInterface, Sequelize) => {

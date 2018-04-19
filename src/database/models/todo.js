@@ -18,8 +18,11 @@ module.exports = class Todo extends Model {
 
     static associate (models) {
         this.belongsTo(models.TodoGroup, {
-            onDelete : 'CASCADE',
-            as       : 'todoGroupId'
+          foreignKey: {
+            allowNull: false,
+            name: 'todoGroupId'
+          },
+          onDelete : 'CASCADE'
         });
     }
 }

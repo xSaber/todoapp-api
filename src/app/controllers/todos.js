@@ -3,14 +3,14 @@ import models from '../../database/models';
 export const todosController = {
 
   /**
-   * Adds TodoItem
+   * Adds Todo
    */
   create(req, res) {
     console.log(req.params)
     return models.Todo
       .create({
         content: req.body.content,
-        todoGroupId: +req.params.todoGroupId,
+        todoGroupId: req.params.todoGroupId,
       })
       .then(todo => res.status(201).send(todo))
       .catch(error => res.status(400).send(error));
@@ -20,7 +20,7 @@ export const todosController = {
     return models.Todo
       .find({
         where: {
-          todoGroupId: +req.params.todoGroupId
+          todoGroupId: req.params.todoGroupId
         }
       })
       .then(todos => res.status(201).send(todos))
