@@ -1,21 +1,25 @@
 import { Model, DataTypes } from 'sequelize';
 
 module.exports = class Todo extends Model {
-    static init(sequelize) {
+    static init (sequelize) {
         return super.init({
-            title : {
+            content : {
                 type      : DataTypes.STRING,
                 allowNull : false,
+            },
+            complete:  {
+                type         : DataTypes.BOOLEAN,
+                defaultValue : false,
             }
         }, {
             sequelize
         });
     }
 
-    static associate(models) {
-        this.hasMany(models.TodoItem, {
-            foreignKey : 'todoId',
-            as         : 'todoItems',
+    static associate (models) {
+        this.belongsTo(models.TodoGroup, {
+            onDelete : 'CASCADE',
+            as       : 'todoGroupId'
         });
     }
 }

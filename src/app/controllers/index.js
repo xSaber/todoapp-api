@@ -1,7 +1,7 @@
-import { todosController } from './todos'
-import { todoItemsController } from './todoItems';
+import { todoGroupsController } from './todoGroups'
+import { todosController } from './todos';
 
 export {
-    todosController,
-    todoItemsController
+    todoGroupsController,
+    todosController
 };
