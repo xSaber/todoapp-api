@@ -1,24 +1,30 @@
-import models from '../../database/models';
+import models from '../../database/models'
 
 export const todosController = {
 
   /**
    * Adds Todo
    */
-  create(req, res) {
+  create(req, res, next) {
+    const { content } = req.body.todo
+    const { todoGroupId } = req.params
+
     return models.Todo
       .create({
-        content: req.body.content,
-        todoGroupId: req.params.todoGroupId,
+        todoGroupId,
+        content
       })
-      .then(todo => res.status(201).send({ todo }))
-      .catch(error => res.status(400).send(error));
+      .then(todo => {
+        res.locals.data = { todo }
+        next()
+      })
+      .catch(error => res.status(500).send(error))
   },
 
-/**
- * Get all Todos
- */
-  list(req, res) {
+  /**
+   * Gets all Todos
+   */
+  list(req, res, next) {
     return models.Todo
       .findAll({
         where: {
@@ -29,57 +35,48 @@ export const todosController = {
         res.locals.data = { todos }
         next()
       })
-      .catch(error => res.status(500).send(error));
+      .catch(error => res.status(500).send(error))
   },
 
   /**
    * Updates Todo
    */
-  update(req, res) {
+  update(req, res, next) {
     return models.Todo
-      .find({
-        where: {
-          id: req.params.todoId
-        }
-      })
+      .find({ where: { id: req.params.todoId } })
       .then(todo => {
         if (!todo) {
-          return res.status(404).send({ message: 'Todo Not Found' });
+          return res.status(404).send({ message: 'Todo not found' })
         }
 
         return todo
-          .update({
-            content: req.body.content || todo.content,
-            complete: req.body.complete || todo.complete,
+          .update({ complete: !todo.complete })
+          .then(updatedTodo => {
+            res.locals.data = { todo: updatedTodo }
+            next()
           })
-          .then(updatedTodo => res.status(200).send(updatedTodo))
-          .catch(error => res.status(400).send(error));
+          .catch(error => res.status(500).send(error))
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error))
   },
 
   /**
    * Removes Todo
    */
-  remove(req, res) {
+  remove(req, res, next) {
     return models.Todo
-      .find({
-        where: {
-          id: req.params.todoId
-        }
-      })
+      .find({ where: { id: req.params.todoId } })
       .then(todo => {
         if (!todo) {
-          return res.status(404).send({
-            message: 'Todo Not Found',
-          });
+          return res.status(404).send({ message: 'Todo not found' })
         }
 
         return todo
           .destroy()
           .then(() => res.status(204).send())
-          .catch(error => res.status(400).send(error));
+          .catch(error => res.status(500).send(error))
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error))
+
   }
-};
+}

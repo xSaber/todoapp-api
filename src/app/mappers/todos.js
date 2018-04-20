@@ -3,8 +3,8 @@ const renderOne = todo => ({
   title: todo.content
 })
 
-export const mapOne = todo => ({
-  todo: renderOne(todo)
+export const mapOne = data => ({
+  todo: renderOne(data.todo)
 })
 
 export const mapMany = data => {

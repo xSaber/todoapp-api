@@ -1,12 +1,12 @@
-const renderOne = todo => ({
-  id:    todo.id,
-  title: todo.content
+const renderOne = todoGroup => ({
+  id:    todoGroup.id,
+  title: todoGroup.title
 })
 
-export const mapOne = todo => ({
-  todo: renderOne(todo)
+export const mapOne = todoGroup => ({
+  todoGroup: renderOne(todoGroup)
 })
 
 export const mapMany = data => ({
-  todos: data.todos.map(todo => renderOne(todo))
-)}
+  todoGroups: data.todoGroups.map(todoGroup => renderOne(todoGroup))
+})
