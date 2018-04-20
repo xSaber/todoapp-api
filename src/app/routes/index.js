@@ -6,7 +6,7 @@ export const routes = (app, express) => {
   const todos = express.Router({ mergeParams: true });
 
   let postRender = (req, res) => {
-    res.status(200).send({ ...res.locals.data });
+    res.status(200).send({ ...res.locals.data, hello: 'lflfdlf' });
   }
 
   app.use('/api/todo-groups', todoGroups);
@@ -18,7 +18,7 @@ export const routes = (app, express) => {
     { route: '/:todoId',      method: 'put',    entity: todos,      handler: todosController.update      },
     { route: '/:todoId',      method: 'delete', entity: todos,      handler: todosController.remove      },
 
-    { route: '/',             method: 'get',    entity: todoGroups, handler: todoGroupsController.list, postRender: postRender   },
+    { route: '/',             method: 'get',    entity: todoGroups, handler: todoGroupsController.list   },
     { route: '/',             method: 'post',   entity: todoGroups, handler: todoGroupsController.create },
     { route: '/:todoGroupId', method: 'get',    entity: todoGroups, handler: todoGroupsController.get    },
     { route: '/:todoGroupId', method: 'put',    entity: todoGroups, handler: todoGroupsController.update },
