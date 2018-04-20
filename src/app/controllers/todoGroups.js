@@ -18,7 +18,7 @@ export const todoGroupsController = {
     },
 
     /**
-     * Gets a list of Todos
+     * Gets a list of Todo Groups
      */
     list (req, res, next) {
       return models.TodoGroup
@@ -31,7 +31,7 @@ export const todoGroupsController = {
     },
 
     /**
-     * Retrieves a certain Todo
+     * Retrieves a certain Todo Group
      */
     get (req, res, next) {
       return models.TodoGroup
