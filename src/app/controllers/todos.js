@@ -6,73 +6,74 @@ export const todosController = {
    * Adds Todo
    */
   create(req, res) {
-    console.log(req.params)
     return models.Todo
       .create({
         content: req.body.content,
         todoGroupId: req.params.todoGroupId,
       })
-      .then(todo => res.status(201).send(todo))
+      .then(todo => res.status(201).send({ todo }))
       .catch(error => res.status(400).send(error));
   },
 
-  index(req, res) {
+/**
+ * Get all Todos
+ */
+  list(req, res) {
     return models.Todo
-      .find({
+      .findAll({
         where: {
           todoGroupId: req.params.todoGroupId
         }
       })
-      .then(todos => res.status(201).send(todos))
+      .then(todos => todos)
+      .then(todos => res.status(200).send({ todos }))
       .catch(error => res.status(400).send(error));
   },
 
   /**
-   * Updates TodoItem
+   * Updates Todo
    */
   update(req, res) {
-    return models.TodoItem
+    return models.Todo
       .find({
         where: {
-          id: req.params.todoItemId,
-          todoId: req.params.todoId,
-        },
-      })
-      .then(todoItem => {
-        if (!todoItem) {
-          return res.status(404).send({
-            message: 'TodoItem Not Found',
-          });
+          id: req.params.todoId
         }
-        return todoItem
+      })
+      .then(todo => {
+        if (!todo) {
+          return res.status(404).send({ message: 'Todo Not Found' });
+        }
+
+        return todo
           .update({
-            content: req.body.content || todoItem.content,
-            complete: req.body.complete || todoItem.complete,
+            content: req.body.content || todo.content,
+            complete: req.body.complete || todo.complete,
           })
-          .then(updatedTodoItem => res.status(200).send(updatedTodoItem))
+          .then(updatedTodo => res.status(200).send(updatedTodo))
           .catch(error => res.status(400).send(error));
       })
       .catch(error => res.status(400).send(error));
   },
 
   /**
-   * Removes TodoItem
+   * Removes Todo
    */
-  destroy(req, res) {
-    return models.TodoItem
+  remove(req, res) {
+    return models.Todo
       .find({
         where: {
-          id: req.params.todoItemId,
-          todoId: req.params.todoId,
-        },
+          id: req.params.todoId
+        }
       })
-      .then(todoItem => {
-        if (!todoItem) {
+      .then(todo => {
+        if (!todo) {
           return res.status(404).send({
-            message: 'TodoItem Not Found',
+            message: 'Todo Not Found',
           });
         }
-        return todoItem
+
+        return todo
           .destroy()
           .then(() => res.status(204).send())
           .catch(error => res.status(400).send(error));

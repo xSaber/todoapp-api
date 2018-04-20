@@ -12,6 +12,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
 
 // Require our routes into the application.
-routes(app);
+routes(app, express);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

@@ -8,17 +8,21 @@ export const todoGroupsController = {
     create (req, res) {
         return models.TodoGroup
             .create({ title : req.body.title })
-            .then(todo => res.status(201).send(todo))
+            .then(todoGroup => res.status(201).send({ todoGroup }))
             .catch(error => res.status(400).send(error));
     },
 
     /**
      * Gets a list of Todos
      */
-    list (req, res) {
+    list (req, res, next) {
         return models.TodoGroup
             .findAll()
-            .then(todoGroups => res.status(200).send(todoGroups))
+            // .then(todoGroups => res.status(200).send({ todoGroups }))
+            .then(todoGroups => {
+              res.locals.data = { todoGroups };
+              next();
+            })
             .catch(error => res.status(400).send(error));
     },
 
@@ -34,7 +38,7 @@ export const todoGroupsController = {
                         message : 'TodoGroup Not Found',
                     });
                 }
-                return res.status(200).send(todoGroup);
+                return res.status(200).send({ todoGroup });
             })
             .catch(error => res.status(400).send(error));
     },
@@ -54,7 +58,7 @@ export const todoGroupsController = {
 
                 return todoGroup
                     .update({ title : req.body.title || todo.title })
-                    .then(() => res.status(200).send(todoGroup))
+                    .then(() => res.status(200).send({ todoGroup }))
                     .catch((error) => res.status(400).send(error));
             })
             .catch((error) => res.status(400).send(error));

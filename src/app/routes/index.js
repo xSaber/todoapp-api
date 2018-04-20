@@ -1,20 +1,33 @@
 import { todoGroupsController, todosController } from '../controllers';
 
-export const routes = (app) => {
+export const routes = (app, express) => {
 
-    // TodoGroups endpoints
-    app.get('/api/todo-groups', todoGroupsController.list);
-    app.get('/api/todo-groups/:todoGroupId', todoGroupsController.get);
-    app.post('/api/todo-groups', todoGroupsController.create);
-    app.put('/api/todo-groups/:todoGroupId', todoGroupsController.update);
-    app.delete('/api/todo-groups/:todoGroupId', todoGroupsController.remove);
+  const todoGroups = express.Router();
+  const todos = express.Router({ mergeParams: true });
 
-    // Todos endpoints
-    app.post('/api/todo-groups/:todoGroupId/todos', todosController.create);
-    app.get('/api/todo-groups/:todoGroupId/todos', todosController.index);
-    // app.put('/api/todos/:todoId/items/:todoItemId', todoItemsController.update);
-    // app.delete('/api/todos/:todoId/items/:todoItemId', todoItemsController.destroy);
+  let postRender = (req, res) => {
+    res.status(200).send({ ...res.locals.data });
+  }
 
-    // Authentication endpoints
-    // app.post('/api/signup', usersController.create);
+  app.use('/api/todo-groups', todoGroups);
+  todoGroups.use('/:todoGroupId/todos', todos);
+
+  const routes = [
+    { route: '/',             method: 'post',   entity: todos,      handler: todosController.create      },
+    { route: '/',             method: 'get',    entity: todos,      handler: todosController.list,       },
+    { route: '/:todoId',      method: 'put',    entity: todos,      handler: todosController.update      },
+    { route: '/:todoId',      method: 'delete', entity: todos,      handler: todosController.remove      },
+
+    { route: '/',             method: 'get',    entity: todoGroups, handler: todoGroupsController.list, postRender: postRender   },
+    { route: '/',             method: 'post',   entity: todoGroups, handler: todoGroupsController.create },
+    { route: '/:todoGroupId', method: 'get',    entity: todoGroups, handler: todoGroupsController.get    },
+    { route: '/:todoGroupId', method: 'put',    entity: todoGroups, handler: todoGroupsController.update },
+    { route: '/:todoGroupId', method: 'delete', entity: todoGroups, handler: todoGroupsController.remove }
+  ]
+
+  routes.forEach((config) => {
+    const { entity, method, route, handler } = config;
+    entity[method](route, handler, postRender);
+  });
+
 };
