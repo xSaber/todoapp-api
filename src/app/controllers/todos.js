@@ -25,9 +25,11 @@ export const todosController = {
           todoGroupId: req.params.todoGroupId
         }
       })
-      .then(todos => todos)
-      .then(todos => res.status(200).send({ todos }))
-      .catch(error => res.status(400).send(error));
+      .then(todos => {
+        res.locals.data = { todos }
+        next()
+      })
+      .catch(error => res.status(500).send(error));
   },
 
   /**

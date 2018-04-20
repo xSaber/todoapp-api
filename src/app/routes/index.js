@@ -1,23 +1,18 @@
 import { todoGroupsController, todosController } from '../controllers';
+import mappers from '../mappers'
 
 export const routes = (app, express) => {
-
   const todoGroups = express.Router();
   const todos = express.Router({ mergeParams: true });
-
-  let postRender = (req, res) => {
-    res.status(200).send({ ...res.locals.data, hello: 'lflfdlf' });
-  }
 
   app.use('/api/todo-groups', todoGroups);
   todoGroups.use('/:todoGroupId/todos', todos);
 
   const routes = [
-    { route: '/',             method: 'post',   entity: todos,      handler: todosController.create      },
-    { route: '/',             method: 'get',    entity: todos,      handler: todosController.list,       },
-    { route: '/:todoId',      method: 'put',    entity: todos,      handler: todosController.update      },
-    { route: '/:todoId',      method: 'delete', entity: todos,      handler: todosController.remove      },
-
+    { route: '/',             method: 'post',   entity: todos,      handler: todosController.create,     mapper: mappers.todos.mapOne  },
+    { route: '/',             method: 'get',    entity: todos,      handler: todosController.list,       mapper: mappers.todos.mapMany },
+    { route: '/:todoId',      method: 'put',    entity: todos,      handler: todosController.update,     mapper: mappers.todos.mapOne  },
+    { route: '/:todoId',      method: 'delete', entity: todos,      handler: todosController.remove,     mapper: mappers.todos.mapOne  },
     { route: '/',             method: 'get',    entity: todoGroups, handler: todoGroupsController.list   },
     { route: '/',             method: 'post',   entity: todoGroups, handler: todoGroupsController.create },
     { route: '/:todoGroupId', method: 'get',    entity: todoGroups, handler: todoGroupsController.get    },
@@ -26,8 +21,15 @@ export const routes = (app, express) => {
   ]
 
   routes.forEach((config) => {
-    const { entity, method, route, handler } = config;
-    entity[method](route, handler, postRender);
-  });
+    const { entity, method, route, handler, mapper } = config;
 
+    entity[method](route, handler, (req, res) => {
+      if (!mapper) {
+        res.status(200).send(res.locals.data)
+        return
+      }
+
+      res.status(200).send(mapper(res.locals.data))
+    });
+  });
 };
