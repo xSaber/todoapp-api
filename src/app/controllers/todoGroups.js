@@ -70,7 +70,7 @@ export const todoGroupsController = {
     },
 
     /**
-     * Removes Todo
+     * Removes Todo Groups
      */
     remove (req, res, next) {
       return models.TodoGroup
