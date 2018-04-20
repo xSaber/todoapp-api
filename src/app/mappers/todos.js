@@ -1,6 +1,7 @@
 const renderOne = todo => ({
   id:    todo.id,
-  title: todo.content
+  title: todo.content,
+  complete: todo.complete
 })
 
 export const mapOne = data => ({
