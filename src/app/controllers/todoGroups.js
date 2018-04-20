@@ -3,7 +3,7 @@ import models from '../../database/models';
 export const todoGroupsController = {
 
     /**
-     * Adds a new TodoGroup
+     * Adds a new Todo Group
      */
     create (req, res, next) {
       const { title } = req.body.todoGroup
