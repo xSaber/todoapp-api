@@ -1,15 +1,16 @@
 import createDefineResource from './defineResource'
 
 export default (app, express) => {
-  const defineResource = createDefineResource({ app, express })
+  const defineResource = createDefineResource(app, express)
 
   defineResource({
-    name: 'todoGroup'
+    name: 'todoGroup',
+    namespaces: ['api', 'v1']
   })
 
   defineResource({
     name: 'todo',
-    actions: ['index', 'create', 'update', 'destroy'],
-    parentName: 'todoGroup'
+    parentName: 'todoGroup',
+    actions: ['index', 'create', 'update', 'destroy']
   })
 }

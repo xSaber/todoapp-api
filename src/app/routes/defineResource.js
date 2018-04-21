@@ -47,24 +47,54 @@ const createActionMap = resourceName => ({
   }
 })
 
-export default (appScope) => {
+const parseOptions = (options) => {
+  let { name, parentName, namespaces, actions } = options
+
+  if (!name) {
+    throw 'Resource name is not provided'
+  }
+
+  const restActions = Object.values(REST_ACTIONS)
+
+  // Defaulting actions to *all* REST actions (see the REST_ACTIONS constants)
+  actions = actions && actions.length ? actions : restActions
+
+  // Validating actions. Throwing error if a non-REST action has been provided
+  actions.forEach(action => {
+    if (!restActions.includes(action)) {
+      throw `A non-REST action detected. Please use some set of ${restActions}.`
+    }
+  })
+
+  // If parent is provided, we won't apply namespaces, because these two
+  // arguments are mutually exclusive
+  if (parentName) {
+    namespaces = []
+  }
+
+  // Defaulting namespace to root (/) if not provided
+  if (!namespaces) {
+    namespaces = []
+  }
+
+  // Assembling namespaces into a string. Empty string means the root namespace
+  const namespace = namespaces.length ? `${namespaces.join('/')}/` : ''
+
+  return { name, parentName, namespace, actions }
+}
+
+const initDefineResource = (app, express) => {
   const routers = {}
-  const { app, express } = appScope
 
   return (options) => {
-    const { name, parentName } = options
-    let { actions } = options
+    const { name, parentName, namespace, actions } = parseOptions(options)
 
-    // TODO: throw exception if name is not present or blank
-    // TODO: handle app, routers, controller, mappers invalid arguments
-    actions = actions && actions.length ? actions : Object.values(REST_ACTIONS)
-
-    // Create different strings for the resource
+    // Creating different strings for the resource
     const namePlural = plural(name)
     const parentNamePlural = parentName && plural(parentName)
     const nameUrl = kebabCase(namePlural)
 
-    // Find and setup routers
+    // Finding and setting routers up
     const parentRouter = parentNamePlural && routers[parentNamePlural]
     const routerOptions = parentRouter ? { mergeParams: true } : {}
     const router = express.Router(routerOptions)
@@ -78,7 +108,7 @@ export default (appScope) => {
     if (parentRouter) {
       parentRouter.use(`/:${parentName}Id/${nameUrl}`, router)
     } else {
-      app.use(`/${nameUrl}`, router)
+      app.use(`/${namespace}${nameUrl}`, router)
     }
 
     actions.forEach(action => {
@@ -101,3 +131,5 @@ export default (appScope) => {
     })
   }
 }
+
+export default initDefineResource
