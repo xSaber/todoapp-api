@@ -2,7 +2,7 @@ import {} from 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
-import configureRoutes from './routes'
+import configureRoutes from './routes';
 
 const app = express();
 const port = process.env.PORT || 3030;

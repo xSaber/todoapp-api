@@ -20,7 +20,7 @@
         "eslint": "node_modules/eslint/bin/eslint.js src/** --fix",
         "development": "yarn run eslint && yarn run build && yarn start",
         "heroku-postbuild": "yarn run build",
-        "watch": "nodemon --exec yarn dev"
+        "watch": "nodemon --exec yarn development"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",

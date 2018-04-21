@@ -20,7 +20,7 @@ export const todoGroupsController = {
 	/**
      * Gets a list of Todo Groups
      */
-	list (req, res, next) {
+	index (req, res, next) {
 		return models.TodoGroup
 			.findAll()
 			.then(todoGroups => {
@@ -33,7 +33,7 @@ export const todoGroupsController = {
 	/**
      * Retrieves a certain Todo Group
      */
-	get (req, res, next) {
+	show (req, res, next) {
 		return models.TodoGroup
 			.findById(req.params.todoGroupId)
 			.then(todoGroup => {
@@ -71,7 +71,7 @@ export const todoGroupsController = {
 	/**
      * Removes Todo Groups
      */
-	remove (req, res, next) {
+	destroy (req, res, next) {
 		return models.TodoGroup
 			.findById(req.params.todoGroupId)
 			.then(todoGroup => {

@@ -24,7 +24,7 @@ export const todosController = {
 	/**
    * Gets all Todos
    */
-	list(req, res, next) {
+	index(req, res, next) {
 		return models.Todo
 			.findAll({
 				where: {
@@ -62,7 +62,7 @@ export const todosController = {
 	/**
    * Removes Todo
    */
-	remove(req, res, next) {
+	destroy(req, res, next) {
 		return models.Todo
 			.find({ where: { id: req.params.todoId } })
 			.then(todo => {
