@@ -1,4 +1,6 @@
 import { plural } from 'pluralize'
+import * as controllers from '../controllers'
+import mappers from '../mappers'
 
 const REST_ACTIONS = {
   INDEX:   'index',
@@ -44,48 +46,54 @@ const createActionMap = resourceName => ({
   }
 })
 
-export default appScope => options => {
-  const { app, routers, controllers, mappers } = appScope
+export default (appScope) => {
+  const routers = {}
+  const { app, express } = appScope
 
-  const { name, parentName } = options
-  let { actions } = options
+  return (options) => {
+    const { name, parentName } = options
+    let { actions } = options
 
-  // TODO: throw exception if name is not present or blank
-  // TODO: handle app, routers, controller, mappers invalid arguments
-  actions = actions && actions.length ? actions : Object.values(REST_ACTIONS)
+    // TODO: throw exception if name is not present or blank
+    // TODO: handle app, routers, controller, mappers invalid arguments
+    actions = actions && actions.length ? actions : Object.values(REST_ACTIONS)
 
-  const namePlural = plural(name)
-  const parentNamePlural = parentName && plural(parentName)
+    const namePlural = plural(name)
+    const parentNamePlural = parentName && plural(parentName)
 
-  const router = routers[namePlural]
-  const parentRouter = parentNamePlural && routers[parentNamePlural]
-  const mapper = mappers[namePlural]
-  const controller = controllers[`${namePlural}Controller`]
+    const parentRouter = parentNamePlural && routers[parentNamePlural]
+    const routerOptions = parentRouter ? { mergeParams: true } : {}
+    const router = express.Router(routerOptions)
+    const mapper = mappers[namePlural]
+    const controller = controllers[`${namePlural}Controller`]
 
-  const actionMap = createActionMap(name)
+    const actionMap = createActionMap(name)
 
-  if (parentRouter) {
-    parentRouter.use(`/:${parentName}Id/${namePlural}`, router)
-  } else {
-    app.use(`/${namePlural}`, router)
-  }
+    routers[namePlural] = router
 
-  actions.forEach(action => {
-    const handler = controller[action]
-    const actionConfig = actionMap[action]
-    const { route, multiple, methods } = actionConfig
+    if (parentRouter) {
+      parentRouter.use(`/:${parentName}Id/${namePlural}`, router)
+    } else {
+      app.use(`/${namePlural}`, router)
+    }
 
-    methods.forEach(method => {
-      if (multiple === null) {
-        router[method](route, handler)
-        return
-      }
+    actions.forEach(action => {
+      const handler = controller[action]
+      const actionConfig = actionMap[action]
+      const { route, multiple, methods } = actionConfig
 
-      router[method](route, handler, (req, res) => {
-        const functionName = multiple ? 'mapMany' : 'mapOne'
-        const response = mapper[functionName](res.locals.data)
-        res.status(200).send(response)
+      methods.forEach(method => {
+        if (multiple === null) {
+          router[method](route, handler)
+          return
+        }
+
+        router[method](route, handler, (req, res) => {
+          const functionName = multiple ? 'mapMany' : 'mapOne'
+          const response = mapper[functionName](res.locals.data)
+          res.status(200).send(response)
+        })
       })
     })
-  })
+  }
 }
