@@ -8,6 +8,42 @@ const REST_ACTIONS = {
   DESTROY: 'destroy'
 }
 
+const HTTP = {
+  GET: 'get',
+  POST: 'post',
+  PUT: 'put',
+  PATCH: 'patch',
+  DELETE: 'delete'
+}
+
+const createActionMap = resourceName => ({
+  [REST_ACTIONS.INDEX]: {
+    route: '/',
+    multiple: true,
+    methods: [HTTP.GET]
+  },
+  [REST_ACTIONS.SHOW]: {
+    route: `/:${resourceName}Id`,
+    multiple: false,
+    methods: [HTTP.GET]
+  },
+  [REST_ACTIONS.CREATE]: {
+    route: '/',
+    multiple: false,
+    methods: [HTTP.POST]
+  },
+  [REST_ACTIONS.UPDATE]: {
+    route: `/:${resourceName}Id`,
+    multiple: false,
+    methods: [HTTP.PUT, HTTP.PATCH]
+  },
+  [REST_ACTIONS.DESTROY]: {
+    route: `/:${resourceName}Id`,
+    multiple: null,
+    methods: [HTTP.DELETE]
+  }
+})
+
 export default appScope => options => {
   const { app, routers, controllers, mappers } = appScope
 
@@ -26,13 +62,7 @@ export default appScope => options => {
   const mapper = mappers[namePlural]
   const controller = controllers[`${namePlural}Controller`]
 
-  const actionMap = {
-    'index':   { route: '/',           multiple: true,  methods: ['get']          },
-    'show':    { route: `/:${name}Id`, multiple: false, methods: ['get']          },
-    'create':  { route: '/',           multiple: false, methods: ['post']         },
-    'update':  { route: `/:${name}Id`, multiple: false, methods: ['put', 'patch'] },
-    'destroy': { route: `/:${name}Id`, multiple: null,  methods: ['delete']       }
-  }
+  const actionMap = createActionMap(name)
 
   if (parentRouter) {
     parentRouter.use(`/:${parentName}Id/${namePlural}`, router)
