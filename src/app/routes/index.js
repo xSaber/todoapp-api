@@ -17,6 +17,6 @@ export default (app, express) => {
   defineResource({
     name: 'todo',
     actions: ['index', 'create', 'update', 'destroy'],
-    parent: 'todoGroup'
+    parentName: 'todoGroup'
   })
 }

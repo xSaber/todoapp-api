@@ -14,18 +14,12 @@ export default appScope => options => {
   const { name, parentName } = options
   let { actions } = options
 
-  console.log(`NAME ${name}`)
-  console.log(`PARENT NAME ${parentName}`)
-
   // TODO: throw exception if name is not present or blank
   // TODO: handle app, routers, controller, mappers invalid arguments
   actions = actions && actions.length ? actions : Object.values(REST_ACTIONS)
 
   const namePlural = plural(name)
   const parentNamePlural = parentName && plural(parentName)
-
-  console.log(`NAME PLURAL ${namePlural}`)
-  console.log(`PARENT NAME PLURAL ${parentNamePlural}`)
 
   const router = routers[namePlural]
   const parentRouter = parentNamePlural && routers[parentNamePlural]
