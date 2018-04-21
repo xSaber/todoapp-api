@@ -62,7 +62,7 @@ const parseOptions = (options) => {
   // Validating actions. Throwing error if a non-REST action has been provided
   actions.forEach(action => {
     if (!restActions.includes(action)) {
-      throw `A non-REST action detected. Please use some set of ${restActions}.`
+      throw `A non-REST action detected: '${action}'. Please use some set of ${restActions}.`
     }
   })
 
