@@ -1,35 +1,32 @@
-import { todoGroupsController, todosController } from '../controllers';
-import mappers from '../mappers';
+import * as controllers from '../controllers'
+import mappers from '../mappers'
+import defineResource from './defineResource'
 
-export const routes = (app, express) => {
-	const todoGroups = express.Router();
-	const todos = express.Router({ mergeParams: true });
+export default (app, express) => {
+  const routers = {
+    todoGroups: express.Router(),
+    todos: express.Router({ mergeParams: true })
+  }
 
-	app.use('/api/todo-groups', todoGroups);
-	todoGroups.use('/:todoGroupId/todos', todos);
+  const defineResourceArgs = { app, routers, controllers, mappers }
 
-	const routes = [
-		{ route: '/', method: 'post', entity: todos, handler: todosController.create, mapper: mappers.todos.mapOne },
-		{ route: '/', method: 'get', entity: todos, handler: todosController.list, mapper: mappers.todos.mapMany },
-		{ route: '/:todoId', method: 'put', entity: todos, handler: todosController.update, mapper: mappers.todos.mapOne },
-		{ route: '/:todoId', method: 'delete', entity: todos, handler: todosController.remove, mapper: mappers.todos.mapOne },
-		{ route: '/', method: 'get', entity: todoGroups, handler: todoGroupsController.list, mapper: mappers.todoGroups.mapMany },
-		{ route: '/', method: 'post', entity: todoGroups, handler: todoGroupsController.create, mapper: mappers.todoGroups.mapOne },
-		{ route: '/:todoGroupId', method: 'get', entity: todoGroups, handler: todoGroupsController.get, mapper: mappers.todoGroups.mapOne },
-		{ route: '/:todoGroupId', method: 'put', entity: todoGroups, handler: todoGroupsController.update, mapper: mappers.todoGroups.mapOne },
-		{ route: '/:todoGroupId', method: 'delete', entity: todoGroups, handler: todoGroupsController.remove, mapper: null }
-	];
+  defineResource({
+    ...defineResourceArgs,
+    name: 'todoGroups'
+  })
 
-	routes.forEach((config) => {
-		const { entity, method, route, handler, mapper } = config;
+  defineResource({
+    ...defineResourceArgs,
+    name: 'todos',
+    actions: ['index', 'create', 'update', 'destroy'],
+    parent: 'todoGroups'
+  })
 
-		entity[method](route, handler, (req, res) => {
-			if (!mapper) {
-				res.status(200).send(res.locals.data);
-				return;
-			}
-
-			res.status(200).send(mapper(res.locals.data));
-		});
-	});
-};
+  // DEBUG
+  Object.values(routers).forEach(router => {
+    router.stack.forEach(layer => {
+      const { path } = layer.route
+      console.log(path)
+    })
+  })
+}
