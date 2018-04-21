@@ -1,6 +1,6 @@
 import * as controllers from '../controllers'
 import mappers from '../mappers'
-import defineResource from './defineResource'
+import createDefineResource from './defineResource'
 
 export default (app, express) => {
   const routers = {
@@ -8,25 +8,15 @@ export default (app, express) => {
     todos: express.Router({ mergeParams: true })
   }
 
-  const defineResourceArgs = { app, routers, controllers, mappers }
+  const defineResource = createDefineResource({ app, routers, controllers, mappers })
 
   defineResource({
-    ...defineResourceArgs,
-    name: 'todoGroups'
+    name: 'todoGroup'
   })
 
   defineResource({
-    ...defineResourceArgs,
-    name: 'todos',
+    name: 'todo',
     actions: ['index', 'create', 'update', 'destroy'],
-    parent: 'todoGroups'
-  })
-
-  // DEBUG
-  Object.values(routers).forEach(router => {
-    router.stack.forEach(layer => {
-      const { path } = layer.route
-      console.log(path)
-    })
+    parent: 'todoGroup'
   })
 }

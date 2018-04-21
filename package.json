@@ -9,6 +9,7 @@
         "express": "^4.16.3",
         "morgan": "^1.9.0",
         "pg-promise": "^8.2.2",
+        "pluralize": "^7.0.0",
         "sequelize": "^4.37.1",
         "sequelize-cli": "^4.0.0"
     },
@@ -18,7 +19,7 @@
         "eslint": "node_modules/eslint/bin/eslint.js src/** --fix",
         "development": "yarn run eslint && yarn run build && yarn start",
         "heroku-postbuild": "yarn run build",
-        "watch": "nodemon --exec yarn development"
+        "watch": "nodemon --exec yarn dev"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",

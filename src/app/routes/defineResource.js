@@ -1,3 +1,5 @@
+import { plural } from 'pluralize'
+
 const REST_ACTIONS = {
   INDEX:   'index',
   SHOW:    'show',
@@ -6,17 +8,30 @@ const REST_ACTIONS = {
   DESTROY: 'destroy'
 }
 
-export default options => {
-  const { name, app, routers, controllers, mappers } = options
-  let { actions, parentName } = options
+export default appScope => options => {
+  const { app, routers, controllers, mappers } = appScope
+
+  const { name, parentName } = options
+  let { actions } = options
+
+  console.log(`NAME ${name}`)
+  console.log(`PARENT NAME ${parentName}`)
 
   // TODO: throw exception if name is not present or blank
-  actions = (actions && actions.length) ? actions : Object.values(REST_ACTIONS)
+  // TODO: handle app, routers, controller, mappers invalid arguments
+  actions = actions && actions.length ? actions : Object.values(REST_ACTIONS)
 
-  const router = routers[name]
-  const parentRouter = parentName && routers[parentName]
-  const mapper = mappers[name]
-  const controller = controllers[`${name}Controller`]
+  const namePlural = plural(name)
+  const parentNamePlural = parentName && plural(parentName)
+
+  console.log(`NAME PLURAL ${namePlural}`)
+  console.log(`PARENT NAME PLURAL ${parentNamePlural}`)
+
+  const router = routers[namePlural]
+  const parentRouter = parentNamePlural && routers[parentNamePlural]
+  const mapper = mappers[namePlural]
+  const controller = controllers[`${namePlural}Controller`]
+
   const actionMap = {
     'index':   { route: '/',           multiple: true,  methods: ['get']          },
     'show':    { route: `/:${name}Id`, multiple: false, methods: ['get']          },
@@ -26,9 +41,9 @@ export default options => {
   }
 
   if (parentRouter) {
-    parentRouter.use(`/:${parentName}Id/${name}`, router)
+    parentRouter.use(`/:${parentName}Id/${namePlural}`, router)
   } else {
-    app.use(`/${name}`, router)
+    app.use(`/${namePlural}`, router)
   }
 
   actions.forEach(action => {
@@ -43,7 +58,9 @@ export default options => {
       }
 
       router[method](route, handler, (req, res) => {
-        const mapper = multiple ? mapper.mapMany : mapper.mapOne
+        const functionName = multiple ? 'mapMany' : 'mapOne'
+        const response = mapper[functionName](res.locals.data)
+        res.status(200).send(response)
       })
     })
   })
