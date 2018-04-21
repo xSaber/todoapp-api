@@ -1,4 +1,5 @@
 import { plural } from 'pluralize'
+import { kebabCase } from 'lodash'
 import * as controllers from '../controllers'
 import mappers from '../mappers'
 
@@ -58,23 +59,26 @@ export default (appScope) => {
     // TODO: handle app, routers, controller, mappers invalid arguments
     actions = actions && actions.length ? actions : Object.values(REST_ACTIONS)
 
+    // Create different strings for the resource
     const namePlural = plural(name)
     const parentNamePlural = parentName && plural(parentName)
+    const nameUrl = kebabCase(namePlural)
 
+    // Find and setup routers
     const parentRouter = parentNamePlural && routers[parentNamePlural]
     const routerOptions = parentRouter ? { mergeParams: true } : {}
     const router = express.Router(routerOptions)
+    routers[namePlural] = router
+
     const mapper = mappers[namePlural]
     const controller = controllers[`${namePlural}Controller`]
 
     const actionMap = createActionMap(name)
 
-    routers[namePlural] = router
-
     if (parentRouter) {
-      parentRouter.use(`/:${parentName}Id/${namePlural}`, router)
+      parentRouter.use(`/:${parentName}Id/${nameUrl}`, router)
     } else {
-      app.use(`/${namePlural}`, router)
+      app.use(`/${nameUrl}`, router)
     }
 
     actions.forEach(action => {
