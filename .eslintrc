@@ -20,7 +20,7 @@
         "no-multi-spaces": "error",
         "no-unused-expressions": ["error", { "allowShortCircuit": true }],
         "comma-dangle": ["error", "never"],
-        "indent": ["error", "tab"],
+        "indent": ["error", 2],
         "key-spacing": ["error", { "align": "colon" }],
         "keyword-spacing": ["error", { "before": true }],
         "no-lonely-if": "error",
