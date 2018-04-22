@@ -19,6 +19,10 @@ const HTTP = {
   DELETE: 'delete'
 };
 
+const wrapAsync = (func) => (req, res, next) => (
+  func(req, res, next).catch(next)
+);
+
 const createActionMap = resourceName => ({
   [REST_ACTIONS.INDEX]: {
     route   : '/',
@@ -118,16 +122,7 @@ const initDefineResource = (app, express) => {
       const { route, multiple, methods } = actionConfig;
 
       methods.forEach(method => {
-        if (multiple === null) {
-          router[method](route, handler);
-          return;
-        }
-
-        router[method](route, handler, (req, res) => {
-          const functionName = multiple ? 'mapMany' : 'mapOne';
-          const response = mapper[functionName](res.locals.data);
-          res.status(200).send(response);
-        });
+        router[method](route, wrapAsync(handler));
       });
     });
   };

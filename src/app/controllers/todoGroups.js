@@ -20,14 +20,10 @@ export const todoGroupsController = {
   /**
      * Gets a list of Todo Groups
      */
-  index (req, res, next) {
-    return models.TodoGroup
-      .findAll()
-      .then(todoGroups => {
-        res.locals.data = { todoGroups };
-        next();
-      })
-      .catch(error => res.status(500).send(error));
+  async index (req, res, next) {
+    const todoGroups = await models.TodoGroup.findAll();
+    throw new Error('Error!')
+    next({ todoGroups });
   },
 
   /**
