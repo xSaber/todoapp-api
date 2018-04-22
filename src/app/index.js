@@ -3,6 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
 import configureRoutes from './routes';
+import { isEmpty } from 'lodash';
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -10,13 +11,14 @@ const port = process.env.PORT || 3030;
 const errorMiddleware = (error, req, res, next) => {
   if (error instanceof Error) {
     res.status(500).send(error);
+    return;
   }
 
   next(error);
 };
 
 const jsonMiddleware = (data, req, res, next) => {
-  const statusCode = data ? 200 : 204;
+  const statusCode = isEmpty(data) ? 204 : 200;
 
   res.status(statusCode).send(data);
 
