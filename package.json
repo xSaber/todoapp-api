@@ -17,7 +17,7 @@
     "scripts": {
         "build": "rm -rf dist/ && babel ./src --out-dir dist/ --copy-files --source-maps",
         "start": "node --inspect dist/app/index.js",
-        "eslint": "node_modules/eslint/bin/eslint.js src/**",
+        "eslint": "node_modules/eslint/bin/eslint.js src/** --fix",
         "development": "yarn run eslint && yarn run build && yarn start",
         "heroku-postbuild": "yarn run build",
         "watch": "nodemon --exec yarn development"

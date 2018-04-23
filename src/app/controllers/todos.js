@@ -1,7 +1,7 @@
 import models from '../../database/models';
+import NotFoundError from '../errors/notFoundError';
 
 export const todosController = {
-
   /**
    * Adds Todo
    */
@@ -9,15 +9,21 @@ export const todosController = {
     const { content } = req.body.todo;
     const { todoGroupId } = req.params;
     const todo = await models.Todo.create({ todoGroupId, content });
-    next({ todo });
+
+    res.locals.data = { todo };
+    next();
   },
 
   /**
    * Gets all Todos
    */
   async index(req, res, next) {
-    const todos = await models.Todo.findAll({ where: { todoGroupId: req.params.todoGroupId } });
-    next({ todos });
+    const todos = await models.Todo.findAll({
+      where: { todoGroupId: req.params.todoGroupId }
+    });
+
+    res.locals.data = { todos };
+    next();
   },
 
   /**
@@ -25,23 +31,33 @@ export const todosController = {
    */
   async update(req, res, next) {
     const todo = await models.Todo.findById(req.params.todoId);
+
     if (!todo) {
-      return res.status(404).send({ message: 'Todo not found' });
+      throw new NotFoundError('Todo not found');
     }
+
     const { complete } = req.body.todo;
     const updatedTodo = await todo.update({ complete });
-    next({ todo: updatedTodo });
+
+    res.locals.data = { todo: updatedTodo };
+    next();
   },
 
   /**
    * Removes Todo
    */
   async destroy(req, res, next) {
-    const todo = await models.Todo.find({ where: { id: req.params.todoId } });
+    const todo = await models.Todo.find({
+      where: { id: req.params.todoId }
+    });
+
     if (!todo) {
-      return res.status(404).send({ message: 'Todo not found' });
+      throw new NotFoundError('Todo not found');
     }
+
     await todo.destroy();
-    next({});
+
+    res.locals.data = {};
+    next();
   }
 };
