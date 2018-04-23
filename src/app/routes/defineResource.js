@@ -20,7 +20,7 @@ const HTTP = {
 };
 
 const wrapAsync = (func) => (req, res, next) => (
-  func(req, res, next).catch(next)
+  func(req, res, next).catch(error => next)
 );
 
 const createActionMap = resourceName => ({

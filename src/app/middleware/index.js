@@ -1,14 +1,18 @@
 import { isEmpty } from 'lodash';
 
 export const error = (error, req, res, next) => {
+  if (!error) {
+    return next();
+  }
+
   console.info('INSIDE ERROR MIDDLEWARE');
 
   if (error instanceof Error) {
-    const statusCode = error.status || 500;
+    const statusCode = error.code || 500;
 
     res.status(statusCode).send({
       error: {
-        status : statusCode,
+        code   : statusCode,
         message: error.message
       }
     });
@@ -19,16 +23,9 @@ export const error = (error, req, res, next) => {
   next(error);
 };
 
-export const json = (req, res, next) => {
-  console.info('INSIDE JSON MIDDLEWARE');
-
-  const { data } = res.locals;
-
-  if (!data) {
-    res.sendStatus(204);
-  } else {
-    res.status(200).send({ data });
+export const notFound = (req, res, next) => res.status(404).send({
+  error: {
+    code   : 404,
+    message: 'Page not found'
   }
-
-  next();
-};
+});

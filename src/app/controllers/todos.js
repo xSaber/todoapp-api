@@ -1,5 +1,5 @@
 import models from '../../database/models';
-import NotFoundError from '../errors/notFoundError';
+import { NotFoundError } from '../errors';
 
 export const todosController = {
   /**

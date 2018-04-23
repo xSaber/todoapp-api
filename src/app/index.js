@@ -18,6 +18,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 configureRoutes(app, express);
 
 app.use(middleware.error);
-app.use(middleware.json);
+app.use(middleware.notFound);
 
 app.listen(port, () => console.info(`Example app listening on port ${port}!`));

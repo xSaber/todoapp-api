@@ -1,5 +1,5 @@
 import models from '../../database/models';
-import NotFoundError from '../errors/notFoundError';
+import { NotFoundError } from '../errors';
 
 const findById = async (id) => {
   const todoGroup = await models.TodoGroup.findById(id);
@@ -12,57 +12,49 @@ const findById = async (id) => {
 };
 
 export const todoGroupsController = {
-  /**
-   * Adds a new Todo Group
-   */
   async create (req, res, next) {
     const { title } = req.body.todoGroup;
-    const todoGroup = await models.TodoGroup.create({ title });
 
-    res.locals.data = { todoGroup };
-    next();
+    try {
+      const todoGroup = await models.TodoGroup.create({ title });
+      res.status(200).send({ todoGroup });
+    } catch (e) {
+      next(e);
+    }
   },
 
-  /**
-   * Gets a list of Todo Groups
-   */
   async index (req, res, next) {
     const todoGroups = await models.TodoGroup.findAll();
 
-    res.locals.data = { todoGroups };
-    next();
+    res.status(200).send({ todoGroups });
   },
 
-  /**
-   * Retrieves a certain Todo Group
-   */
   async show (req, res, next) {
     const todoGroup = await findById(req.params.todoGroupId);
 
-    res.locals.data = { todoGroup };
-    next();
+    res.status(200).send({ todoGroup });
   },
 
-  /**
-   * Updates Todo Groups
-   */
   async update (req, res, next) {
     const todoGroup = await findById(req.params.todoGroupId);
-    const { title } = req.body.todoGroup || todoGroup.title;
-    const updatedTodoGroup = await todoGroup.update({ title });
+    const title = req.body.todoGroup.title || todoGroup.title;
 
-    res.locals.data = { todoGroup: updatedTodoGroup };
-    next();
+    try {
+      const updatedTodoGroup = await todoGroup.update({ title });
+      res.status(200).send({ todoGroup: updatedTodoGroup });
+    } catch (e) {
+      next(e);
+    }
   },
 
-  /**
-   * Removes Todo Groups
-   */
   async destroy (req, res, next) {
     const todoGroup = await findById(req.params.todoGroupId);
-    await todoGroup.destroy();
 
-    res.locals.data = {};
-    next();
+    try {
+      await todoGroup.destroy();
+      res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
   }
 };
