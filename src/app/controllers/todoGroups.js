@@ -11,7 +11,7 @@ const findById = async (id) => {
   return todoGroup;
 };
 
-export const todoGroupsController = {
+export default {
   async create (req, res, next) {
     const { title } = req.body.todoGroup;
 
@@ -30,9 +30,12 @@ export const todoGroupsController = {
   },
 
   async show (req, res, next) {
-    const todoGroup = await findById(req.params.todoGroupId);
-
-    res.status(200).send({ todoGroup });
+    try {
+      const todoGroup = await findById(req.params.todoGroupId);
+      res.status(200).send({ todoGroup });
+    } catch (e) {
+      next(e);
+    }
   },
 
   async update (req, res, next) {

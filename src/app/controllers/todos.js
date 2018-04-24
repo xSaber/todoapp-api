@@ -2,9 +2,6 @@ import models from '../../database/models';
 import { NotFoundError } from '../errors';
 
 export const todosController = {
-  /**
-   * Adds Todo
-   */
   async create(req, res, next) {
     const { content } = req.body.todo;
     const { todoGroupId } = req.params;
@@ -14,9 +11,6 @@ export const todosController = {
     next();
   },
 
-  /**
-   * Gets all Todos
-   */
   async index(req, res, next) {
     const todos = await models.Todo.findAll({
       where: { todoGroupId: req.params.todoGroupId }
@@ -26,9 +20,6 @@ export const todosController = {
     next();
   },
 
-  /**
-   * Updates Todo
-   */
   async update(req, res, next) {
     const todo = await models.Todo.findById(req.params.todoId);
 
@@ -43,9 +34,6 @@ export const todosController = {
     next();
   },
 
-  /**
-   * Removes Todo
-   */
   async destroy(req, res, next) {
     const todo = await models.Todo.find({
       where: { id: req.params.todoId }

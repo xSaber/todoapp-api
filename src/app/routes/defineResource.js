@@ -1,7 +1,6 @@
 import { plural } from 'pluralize';
 import { kebabCase } from 'lodash';
 import * as controllers from '../controllers';
-import mappers from '../mappers';
 
 const REST_ACTIONS = {
   INDEX  : 'index',
@@ -24,31 +23,11 @@ const wrapAsync = (func) => (req, res, next) => (
 );
 
 const createActionMap = resourceName => ({
-  [REST_ACTIONS.INDEX]: {
-    route   : '/',
-    multiple: true,
-    methods : [HTTP.GET]
-  },
-  [REST_ACTIONS.SHOW]: {
-    route   : `/:${resourceName}Id`,
-    multiple: false,
-    methods : [HTTP.GET]
-  },
-  [REST_ACTIONS.CREATE]: {
-    route   : '/',
-    multiple: false,
-    methods : [HTTP.POST]
-  },
-  [REST_ACTIONS.UPDATE]: {
-    route   : `/:${resourceName}Id`,
-    multiple: false,
-    methods : [HTTP.PUT, HTTP.PATCH]
-  },
-  [REST_ACTIONS.DESTROY]: {
-    route   : `/:${resourceName}Id`,
-    multiple: null,
-    methods : [HTTP.DELETE]
-  }
+  [REST_ACTIONS.INDEX]  : { route: '/', methods: [HTTP.GET] },
+  [REST_ACTIONS.SHOW]   : { route: `/:${resourceName}Id`, methods: [HTTP.GET] },
+  [REST_ACTIONS.CREATE] : { route: '/', methods: [HTTP.POST] },
+  [REST_ACTIONS.UPDATE] : { route: `/:${resourceName}Id`, methods: [HTTP.PUT, HTTP.PATCH] },
+  [REST_ACTIONS.DESTROY]: { route: `/:${resourceName}Id`, methods: [HTTP.DELETE] }
 });
 
 const parseOptions = (options) => {
@@ -105,9 +84,7 @@ const initDefineResource = (app, express) => {
     const router = express.Router(routerOptions);
     routers[namePlural] = router;
 
-    const mapper = mappers[namePlural];
     const controller = controllers[`${namePlural}Controller`];
-
     const actionMap = createActionMap(name);
 
     if (parentRouter) {
@@ -119,7 +96,7 @@ const initDefineResource = (app, express) => {
     actions.forEach(action => {
       const handler = controller[action];
       const actionConfig = actionMap[action];
-      const { route, multiple, methods } = actionConfig;
+      const { route, methods } = actionConfig;
 
       methods.forEach(method => {
         router[method](route, wrapAsync(handler));
