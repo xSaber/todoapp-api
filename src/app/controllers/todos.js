@@ -2,6 +2,7 @@ import models from '../../database/models';
 import { NotFoundError } from '../errors';
 
 export default {
+
   async create(req, res, next) {
     const { content } = req.body.todo;
     const { todoGroupId } = req.params;

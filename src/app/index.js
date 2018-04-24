@@ -17,7 +17,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Require our routes into the application.
 configureRoutes(app, express);
 
-app.use(middleware.error);
 app.use(middleware.notFound);
+app.use(middleware.error);
+
 
 app.listen(port, () => console.info(`Example app listening on port ${port}!`));

@@ -1,7 +1,7 @@
 import * as todos from './todos';
 import * as todoGroups from './todoGroups';
 
-export default {
+export {
   todos,
   todoGroups
 };

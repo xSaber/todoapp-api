@@ -1,12 +1,7 @@
 import { isEmpty } from 'lodash';
+import { NotFoundError } from '../errors';
 
 export const error = (error, req, res, next) => {
-  if (!error) {
-    return next();
-  }
-
-  console.info('INSIDE ERROR MIDDLEWARE');
-
   if (error instanceof Error) {
     const statusCode = error.code || 500;
 
@@ -23,9 +18,7 @@ export const error = (error, req, res, next) => {
   next(error);
 };
 
-export const notFound = (req, res, next) => res.status(404).send({
-  error: {
-    code   : 404,
-    message: 'Page not found'
-  }
-});
+export const notFound = (req, res, next) => {
+  const error = new NotFoundError('Page not found');
+  next(error);
+};
