@@ -101,5 +101,7 @@ export default (app, express, controllers) => {
         router[method](route, wrapAsync(handler));
       });
     });
+
+    return router;
   };
 };
