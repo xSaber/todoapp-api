@@ -1,7 +1,8 @@
-import createDefineResource from './defineResource';
+import * as controllers from '../controllers';
+import initDefineResource from './defineResource';
 
 export default (app, express) => {
-  const defineResource = createDefineResource(app, express);
+  const defineResource = initDefineResource(app, express, controllers);
 
   defineResource({
     name      : 'todoGroup',

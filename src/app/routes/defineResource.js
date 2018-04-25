@@ -1,6 +1,5 @@
 import { plural } from 'pluralize';
 import { kebabCase } from 'lodash';
-import * as controllers from '../controllers';
 
 const REST_ACTIONS = {
   INDEX  : 'index',
@@ -67,7 +66,7 @@ const parseOptions = (options) => {
   return { name, parentName, namespace, actions };
 };
 
-const initDefineResource = (app, express) => {
+export default (app, express, controllers) => {
   const routers = {};
 
   return (options) => {
@@ -104,5 +103,3 @@ const initDefineResource = (app, express) => {
     });
   };
 };
-
-export default initDefineResource;
