@@ -1,5 +1,5 @@
 import { plural } from 'pluralize';
-import { kebabCase } from 'lodash';
+import { kebabCase, snakeCase, camelCase } from 'lodash';
 
 const REST_ACTIONS = {
   INDEX  : 'index',
@@ -17,9 +17,11 @@ const HTTP = {
   DELETE: 'delete'
 };
 
-const wrapAsync = (func) => (req, res, next) => (
-  func(req, res, next).catch(error => next)
-);
+const URL_CASES = {
+  'kebab': kebabCase,
+  'snake': snakeCase,
+  'camel': camelCase
+};
 
 const createActionMap = resourceName => ({
   [REST_ACTIONS.INDEX]  : { route: '/', methods: [HTTP.GET] },
@@ -30,8 +32,9 @@ const createActionMap = resourceName => ({
 });
 
 const parseOptions = (options) => {
-  const { name, parentName } = options;
+  const { name, parentName, urlCase } = options;
   let { namespaces, actions } = options;
+  let urlCaseFunction;
 
   if (!name) {
     throw 'Resource name is not provided';
@@ -60,22 +63,37 @@ const parseOptions = (options) => {
     namespaces = [];
   }
 
+  // Defaulting url case to kebab-case
+  if (Object.keys(URL_CASES).includes(urlCase)) {
+    urlCaseFunction = URL_CASES[urlCase];
+  } else {
+    urlCaseFunction = URL_CASES['kebab'];
+  }
+
   // Assembling namespaces into a string. Empty string means the root namespace
   const namespace = namespaces.length ? `${namespaces.join('/')}/` : '';
 
-  return { name, parentName, namespace, actions };
+  return { name, parentName, namespace, actions, urlCaseFunction };
+};
+
+const wrapHandler = (handler) => async (req, res, next) => {
+  try {
+    await handler(req, res, next);
+  } catch (e) {
+    next(e);
+  }
 };
 
 export default (app, express, controllers) => {
   const routers = {};
 
   return (options) => {
-    const { name, parentName, namespace, actions } = parseOptions(options);
+    const { name, parentName, namespace, actions, urlCaseFunction } = parseOptions(options);
 
     // Creating different strings for the resource
     const namePlural = plural(name);
     const parentNamePlural = parentName && plural(parentName);
-    const nameUrl = kebabCase(namePlural);
+    const nameUrl = urlCaseFunction(namePlural);
 
     // Finding and setting routers up
     const parentRouter = parentNamePlural && routers[parentNamePlural];
@@ -98,7 +116,7 @@ export default (app, express, controllers) => {
       const { route, methods } = actionConfig;
 
       methods.forEach(method => {
-        router[method](route, wrapAsync(handler));
+        router[method](route, wrapHandler(handler));
       });
     });
 
