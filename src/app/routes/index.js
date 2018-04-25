@@ -1,7 +1,6 @@
-import * as controllers from '../controllers';
 import initDefineResource from './defineResource';
 
-export default (app, express) => {
+export default (app, express, controllers) => {
   const defineResource = initDefineResource(app, express, controllers);
 
   defineResource({
