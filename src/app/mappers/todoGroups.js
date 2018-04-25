@@ -3,10 +3,12 @@ const renderOne = todoGroup => ({
   title: todoGroup.title
 });
 
-export const mapOne = todoGroup => ({
-  todoGroup: renderOne(todoGroup)
-});
+export default {
+  mapOne: todoGroup => ({
+    todoGroup: renderOne(todoGroup)
+  }),
 
-export const mapMany = todoGroups => ({
-  todoGroups: todoGroups.map(todoGroup => renderOne(todoGroup))
-});
+  mapMany: todoGroups => ({
+    todoGroups: todoGroups.map(todoGroup => renderOne(todoGroup))
+  })
+};

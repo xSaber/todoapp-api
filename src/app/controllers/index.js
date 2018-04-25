@@ -1,7 +1,2 @@
-import todoGroupsController from './todoGroups';
-import todosController from './todos';
-
-export {
-  todoGroupsController,
-  todosController
-};
+export { default as todoGroupsController } from './todoGroups';
+export { default as todosController } from './todos';

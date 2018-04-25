@@ -6,14 +6,12 @@ export default (app, express) => {
 
   defineResource({
     name      : 'todoGroup',
-    namespaces: ['api', 'v1'],
-    urlCase   : 'camel'
+    namespaces: ['api', 'v1']
   });
 
   defineResource({
     name      : 'todo',
     parentName: 'todoGroup',
-    actions   : ['index', 'create', 'update', 'destroy'],
-    urlCase   : 'camel'
+    actions   : ['index', 'create', 'update', 'destroy']
   });
 };
