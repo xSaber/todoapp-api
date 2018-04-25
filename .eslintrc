@@ -19,7 +19,7 @@
         "no-loop-func": "error",
         "no-multi-spaces": "error",
         "no-unused-expressions": ["error", { "allowShortCircuit": true }],
-        "comma-dangle": ["error", "never"],
+        "comma-dangle": ["warn", "never"],
         "indent": ["warn", 2],
         "key-spacing": ["warn", { "align": "colon" }],
         "keyword-spacing": ["error", { "before": true }],

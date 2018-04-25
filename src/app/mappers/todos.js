@@ -4,10 +4,10 @@ const renderOne = todo => ({
   complete: todo.complete
 });
 
-export const mapOne = data => ({
-  todo: renderOne(data.todo)
+export const mapOne = todo => ({
+  todo: renderOne(todo)
 });
 
-export const mapMany = data => ({
-  todos: data.todos.map(todo => renderOne(todo))
+export const mapMany = todos => ({
+  todos: todos.map(todo => renderOne(todo))
 });
