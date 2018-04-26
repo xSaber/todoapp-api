@@ -46,7 +46,7 @@ const findById = async (id) => {
   const todoGroup = await models.TodoGroup.findById(id);
 
   if (!todoGroup) {
-    throw new NotFoundError('Todo group not found');
+    throw new NotFoundError('Todo Group not found');
   }
 
   return todoGroup;
