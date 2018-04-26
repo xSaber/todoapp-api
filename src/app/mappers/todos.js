@@ -1,7 +1,7 @@
 const renderOne = todo => ({
-  id      : todo.id,
-  title   : todo.content,
-  complete: todo.complete
+  id       : todo.id,
+  title    : todo.content,
+  completed: todo.completed
 });
 
 export default {

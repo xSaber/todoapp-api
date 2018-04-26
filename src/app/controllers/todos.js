@@ -15,7 +15,8 @@ export default {
   async index(req, res, next) {
     const todoGroup = await models.TodoGroup.find({
       where  : { id: req.params.todoGroupId },
-      include: [{ model: models.Todo, as: 'todos' }]
+      include: [{ model: models.Todo, as: 'todos' }],
+      order  : [['todos', 'createdAt', 'DESC']]
     });
 
     if (!todoGroup) {
@@ -30,8 +31,8 @@ export default {
   async update(req, res, next) {
     const todo = await findById(req.params.todoId);
 
-    const { complete } = req.body.todo;
-    const updatedTodo = await todo.update({ complete });
+    const completed = req.body.todo.completed || todo.completed;
+    const updatedTodo = await todo.update({ completed });
 
     const data = mapper.mapOne(updatedTodo);
 

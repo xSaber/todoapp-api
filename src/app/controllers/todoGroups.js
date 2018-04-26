@@ -12,7 +12,10 @@ export default {
   },
 
   async index (req, res, next) {
-    const todoGroups = await models.TodoGroup.findAll();
+    const todoGroups = await models.TodoGroup.findAll({
+      order: [['createdAt', 'DESC']]
+    });
+
     const data = mapper.mapMany(todoGroups);
 
     res.status(200).send({ data });
