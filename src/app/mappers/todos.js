@@ -1,13 +1,15 @@
 const renderOne = todo => ({
-	id      : todo.id,
-	title   : todo.content,
-	complete: todo.complete
+  id       : todo.id,
+  title    : todo.content,
+  completed: todo.completed
 });
 
-export const mapOne = data => ({
-	todo: renderOne(data.todo)
-});
+export default {
+  mapOne: todo => ({
+    todo: renderOne(todo)
+  }),
 
-export const mapMany = data => ({
-	todos: data.todos.map(todo => renderOne(todo))
-});
+  mapMany: todos => ({
+    todos: todos.map(todo => renderOne(todo))
+  })
+};

@@ -1,12 +1,14 @@
 const renderOne = todoGroup => ({
-	id   : todoGroup.id,
-	title: todoGroup.title
+  id   : todoGroup.id,
+  title: todoGroup.title
 });
 
-export const mapOne = data => ({
-	todoGroup: renderOne(data.todoGroup)
-});
+export default {
+  mapOne: todoGroup => ({
+    todoGroup: renderOne(todoGroup)
+  }),
 
-export const mapMany = data => ({
-	todoGroups: data.todoGroups.map(todoGroup => renderOne(todoGroup))
-});
+  mapMany: todoGroups => ({
+    todoGroups: todoGroups.map(todoGroup => renderOne(todoGroup))
+  })
+};

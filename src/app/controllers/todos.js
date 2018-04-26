@@ -1,79 +1,59 @@
 import models from '../../database/models';
+import { todos as mapper } from '../mappers';
+import { NotFoundError } from '../errors';
 
-export const todosController = {
+export default {
+  async create(req, res, next) {
+    const { title } = req.body.todo;
+    const { todoGroupId } = req.params;
+    const todo = await models.Todo.create({ todoGroupId, content: title });
+    const data = mapper.mapOne(todo);
 
-	/**
-   * Adds Todo
-   */
-	create(req, res, next) {
-		const { content } = req.body.todo;
-		const { todoGroupId } = req.params;
+    res.status(200).send({ data });
+  },
 
-		return models.Todo
-			.create({
-				todoGroupId,
-				content
-			})
-			.then(todo => {
-				res.locals.data = { todo };
-				next();
-			})
-			.catch(error => res.status(500).send(error));
-	},
+  async index(req, res, next) {
+    const todoGroup = await models.TodoGroup.find({
+      where  : { id: req.params.todoGroupId },
+      include: [{ model: models.Todo, as: 'todos' }],
+      order  : [['todos', 'createdAt', 'DESC']]
+    });
 
-	/**
-   * Gets all Todos
-   */
-	list(req, res, next) {
-		return models.Todo
-			.findAll({
-				where: {
-					todoGroupId: req.params.todoGroupId
-				}
-			})
-			.then(todos => {
-				res.locals.data = { todos };
-				next();
-			})
-			.catch(error => res.status(500).send(error));
-	},
+    if (!todoGroup) {
+      throw new NotFoundError('Todo Group not found');
+    }
 
-	/**
-   * Updates Todo
-   */
-	update(req, res, next) {
-		return models.Todo
-			.findById(req.params.todoId)
-			.then(todo => {
-				if (!todo) {
-					return res.status(404).send({ message: 'Todo not found' });
-				}
+    const data = mapper.mapMany(todoGroup.todos);
 
-				return todo;
-			})
-			.then(todo => todo.update({ complete: !todo.complete }))
-			.then(updatedTodo => {
-				res.locals.data = { todo: updatedTodo };
-				next();
-			})
-			.catch(error => res.status(500).send(error));
-	},
+    res.status(200).send({ data });
+  },
 
-	/**
-   * Removes Todo
-   */
-	remove(req, res, next) {
-		return models.Todo
-			.find({ where: { id: req.params.todoId } })
-			.then(todo => {
-				if (!todo) {
-					return res.status(404).send({ message: 'Todo not found' });
-				}
+  async update(req, res, next) {
+    const todo = await findById(req.params.todoId);
 
-				return todo;
-			})
-			.then((todo) => todo.destroy())
-			.then(() => res.status(204).send())
-			.catch(error => res.status(500).send(error));
-	}
+    const completed = req.body.todo.completed || todo.completed;
+    const updatedTodo = await todo.update({ completed });
+
+    const data = mapper.mapOne(updatedTodo);
+
+    res.status(200).send({ data });
+  },
+
+  async destroy(req, res, next) {
+    const todo = await findById(req.params.todoId);
+
+    await todo.destroy();
+
+    res.sendStatus(204);
+  }
+};
+
+const findById = async (id) => {
+  const todo = await models.Todo.findById(id);
+
+  if (!todo) {
+    throw new NotFoundError('Todo not found');
+  }
+
+  return todo;
 };

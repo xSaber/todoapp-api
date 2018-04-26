@@ -1,88 +1,56 @@
 import models from '../../database/models';
+import { todoGroups as mapper } from '../mappers';
+import { NotFoundError } from '../errors';
 
-export const todoGroupsController = {
+export default {
+  async create (req, res, next) {
+    const { title } = req.body.todoGroup;
+    const todoGroup = await models.TodoGroup.create({ title });
+    const data = mapper.mapOne(todoGroup);
 
-	/**
-     * Adds a new Todo Group
-     */
-	create (req, res, next) {
-		const { title } = req.body.todoGroup;
+    res.status(200).send({ data });
+  },
 
-		return models.TodoGroup
-			.create({ title })
-			.then(todoGroup => {
-				res.locals.data = { todoGroup };
-				next();
-			})
-			.catch(error => res.status(500).send(error));
-	},
+  async index (req, res, next) {
+    const todoGroups = await models.TodoGroup.findAll({
+      order: [['createdAt', 'DESC']]
+    });
 
-	/**
-     * Gets a list of Todo Groups
-     */
-	list (req, res, next) {
-		return models.TodoGroup
-			.findAll()
-			.then(todoGroups => {
-				res.locals.data = { todoGroups };
-				next();
-			})
-			.catch(error => res.status(500).send(error));
-	},
+    const data = mapper.mapMany(todoGroups);
 
-	/**
-     * Retrieves a certain Todo Group
-     */
-	get (req, res, next) {
-		return models.TodoGroup
-			.findById(req.params.todoGroupId)
-			.then(todoGroup => {
-				if (!todoGroup) {
-					return res.status(404).send({ messages: 'Todo group not found' });
-				}
+    res.status(200).send({ data });
+  },
 
-				res.locals.data = { todoGroup };
-				next();
-			})
-			.catch(error => res.status(500).send(error));
-	},
+  async show (req, res, next) {
+    const todoGroup = await findById(req.params.todoGroupId);
+    const data = mapper.mapOne(todoGroup);
 
-	/**
-     * Updates Todo Groups
-     */
-	update (req, res, next) {
-		return models.TodoGroup
-			.findById(req.params.todoGroupId)
-			.then(todoGroup => {
-				if (!todoGroup) {
-					return res.status(404).send({ message: 'Todo group not found' });
-				}
+    res.status(200).send({ data });
+  },
 
-				return todoGroup;
-			})
-			.then(todoGroup => todoGroup.update({ title: req.body.title || todoGroup.title }))
-			.then(updatedTodoGroup => {
-				res.locals.data = { todoGroup: updatedTodoGroup };
-				next();
-			})
-			.catch(error => res.status(500).send(error));
-	},
+  async update (req, res, next) {
+    const todoGroup = await findById(req.params.todoGroupId);
+    const title = req.body.todoGroup.title || todoGroup.title;
+    const updatedTodoGroup = await todoGroup.update({ title });
+    const data = mapper.mapOne(updatedTodoGroup);
 
-	/**
-     * Removes Todo Groups
-     */
-	remove (req, res, next) {
-		return models.TodoGroup
-			.findById(req.params.todoGroupId)
-			.then(todoGroup => {
-				if (!todoGroup) {
-					return res.status(404).send({ message: 'Todo group not found' });
-				}
+    res.status(200).send({ data });
+  },
 
-				return todoGroup;
-			})
-			.then((todoGroup) => todoGroup.destroy())
-			.then(() => res.status(204).send())
-			.catch(error => res.status(500).send(error));
-	}
+  async destroy (req, res, next) {
+    const todoGroup = await findById(req.params.todoGroupId);
+    await todoGroup.destroy();
+
+    res.sendStatus(204);
+  }
+};
+
+const findById = async (id) => {
+  const todoGroup = await models.TodoGroup.findById(id);
+
+  if (!todoGroup) {
+    throw new NotFoundError('Todo Group not found');
+  }
+
+  return todoGroup;
 };
