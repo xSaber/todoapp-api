@@ -1,6 +1,6 @@
 export default (func) => async (req, res, next) => {
   try {
-    await func(req, req, next);
+    await func(req, res, next);
   } catch (e) {
     next(e);
   }
