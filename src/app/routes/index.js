@@ -1,21 +1,7 @@
-import initDefineResource from './defineResource';
+import { todoGroupsController, todosController } from '~/app/controllers';
 
 export default (app, express, controllers) => {
-  const defineResource = initDefineResource(app, express, controllers);
-
-	const routerOptions = { mergeParams: true };
-
-	const rootRouter = express.Router();
-	const todoGroupsRouter = express.Router(routerOptions);
-	const todosRouter = express.Router(routerOptions);
-
-	app.use('/api/v1', rootRouter); // main router, should be parent for all routers
-
-	rootRouter.use('/todo-groups/:todoGroupId', todoGroupsRouter);
-	todoGroupsRouter.use('/todos/:todoId', todoGroupsRouter);
-
-
-	/**
+  /**
 	 *
 	 * 1. Define routes for routers depending on the entity
 	 *
@@ -28,17 +14,26 @@ export default (app, express, controllers) => {
 	 *
 	 */
 
+  const rootRouter = express.Router();
+  app.use('/', rootRouter);
 
+  const apiV1Router = express.Router();
+  rootRouter.use('/api/v1', apiV1Router);
 
-  // defineResource({
-  //   name      : 'todoGroup',
-  //   namespaces: ['api', 'v1']
-  // });
-	//
-  // defineResource({
-  //   name      : 'todo',
-  //   parentName: 'todoGroup',
-  //   actions   : ['index', 'create', 'update', 'destroy']
-  // });
+  const todoGroupsRouter = express.Router();
+  todoGroupsRouter.post('/', todoGroupsController.create);
+  todoGroupsRouter.get('/', todoGroupsController.index);
+  todoGroupsRouter.get('/:todoGroupId', todoGroupsController.show);
+  todoGroupsRouter.patch('/:todoGroupId', todoGroupsController.update);
+  todoGroupsRouter.put('/:todoGroupId', todoGroupsController.update);
+  todoGroupsRouter.delete('/:todoGroupId', todoGroupsController.destroy);
+  apiV1Router.use('/todo-groups', todoGroupsRouter);
 
+  const todosRouter = express.Router({ mergeParams: true });
+  todosRouter.post('/', todosController.create);
+  todosRouter.get('/', todosController.index);
+  todosRouter.patch('/:todoId', todosController.update);
+  todosRouter.put('/:todoId', todosController.update);
+  todosRouter.delete('/:todoId', todosController.update);
+  todoGroupsRouter.use('/:todoGroupId/todos', todosRouter);
 };
