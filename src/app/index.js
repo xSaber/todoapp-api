@@ -9,8 +9,9 @@ import rootRouter from '~/app/routes';
 const app = express();
 const port = process.env.PORT || 3030;
 
-app.use(logger('dev'));
 app.disable('x-powered-by');
+
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', rootRouter);
