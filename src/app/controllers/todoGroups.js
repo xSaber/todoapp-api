@@ -22,14 +22,13 @@ export default {
   },
 
   async show (req, res, next) {
-    const todoGroup = await findById(req.params.todoGroupId);
-    const data = mapper.mapOne(todoGroup);
+    const data = mapper.mapOne(res.locals.todoGroup);
 
     res.status(200).send({ data });
   },
 
   async update (req, res, next) {
-    const todoGroup = await findById(req.params.todoGroupId);
+    const todoGroup = res.locals.todoGroup;
     const title = req.body.todoGroup.title || todoGroup.title;
     const updatedTodoGroup = await todoGroup.update({ title });
     const data = mapper.mapOne(updatedTodoGroup);
@@ -38,19 +37,9 @@ export default {
   },
 
   async destroy (req, res, next) {
-    const todoGroup = await findById(req.params.todoGroupId);
+    const todoGroup = res.locals.todoGroup;
     await todoGroup.destroy();
 
     res.sendStatus(204);
   }
-};
-
-const findById = async (id) => {
-  const todoGroup = await models.TodoGroup.findById(id);
-
-  if (!todoGroup) {
-    throw new NotFoundError('Todo Group not found');
-  }
-
-  return todoGroup;
 };

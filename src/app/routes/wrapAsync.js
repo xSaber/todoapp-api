@@ -1,6 +1,9 @@
-export default (func) => async (req, res, next) => {
+export default (func) => async (...args) => {
+  // This hack with `...` operator is done for variable arguments number
+  const next = args[2];
+
   try {
-    await func(req, res, next);
+    await func(...args);
   } catch (e) {
     next(e);
   }

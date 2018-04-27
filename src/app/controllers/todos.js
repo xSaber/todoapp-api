@@ -3,6 +3,7 @@ import { todos as mapper } from '../mappers';
 import { NotFoundError } from '../errors';
 
 export default {
+
   async create(req, res, next) {
     const { title } = req.body.todo;
     const { todoGroupId } = req.params;
@@ -13,26 +14,20 @@ export default {
   },
 
   async index(req, res, next) {
-    const todoGroup = await models.TodoGroup.find({
-      where  : { id: req.params.todoGroupId },
-      include: [{ model: models.Todo, as: 'todos' }],
-      order  : [['todos', 'createdAt', 'DESC']]
+    const todos = await models.Todo.findAll({
+      where  : { todoGroupId: req.params.todoGroupId },
+      order  : [['createdAt', 'DESC']]
     });
 
-    if (!todoGroup) {
-      throw new NotFoundError('Todo Group not found');
-    }
-
-    const data = mapper.mapMany(todoGroup.todos);
+    const data = mapper.mapMany(todos);
 
     res.status(200).send({ data });
   },
 
   async update(req, res, next) {
-    const todo = await findById(req.params.todoId);
-
-    const completed = req.body.todo.completed || todo.completed;
-    const updatedTodo = await todo.update({ completed });
+    const todo = res.locals.todo;
+    const complete = req.body.todo.complete || todo.complete;
+    const updatedTodo = await todo.update({ complete });
 
     const data = mapper.mapOne(updatedTodo);
 
@@ -40,20 +35,10 @@ export default {
   },
 
   async destroy(req, res, next) {
-    const todo = await findById(req.params.todoId);
+    const todo = res.locals.todo;
 
     await todo.destroy();
 
     res.sendStatus(204);
   }
-};
-
-const findById = async (id) => {
-  const todo = await models.Todo.findById(id);
-
-  if (!todo) {
-    throw new NotFoundError('Todo not found');
-  }
-
-  return todo;
 };
