@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { todosController } from '~/app/controllers';
+import wrapAsync from '~/app/routes/wrapAsync';
 
 export default Router({ mergeParams: true })
-  .post('/', todosController.create)
-  .get('/', todosController.index)
-  .patch('/:todoId', todosController.update)
-  .put('/:todoId', todosController.update)
-  .delete('/:todoId', todosController.update);
+  .post('/', wrapAsync(todosController.create))
+  .get('/', wrapAsync(todosController.index))
+  .patch('/:todoId', wrapAsync(todosController.update))
+  .put('/:todoId', wrapAsync(todosController.update))
+  .delete('/:todoId', wrapAsync(todosController.update));

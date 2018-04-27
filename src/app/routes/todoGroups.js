@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { todoGroupsController } from '~/app/controllers';
+import wrapAsync from '~/app/routes/wrapAsync';
 
 export default Router()
-  .post('/', todoGroupsController.create)
-  .get('/', todoGroupsController.index)
-  .get('/:todoGroupId', todoGroupsController.show)
-  .patch('/:todoGroupId', todoGroupsController.update)
-  .put('/:todoGroupId', todoGroupsController.update)
-  .delete('/:todoGroupId', todoGroupsController.destroy);
+  .post('/', wrapAsync(todoGroupsController.create))
+  .get('/', wrapAsync(todoGroupsController.index))
+  .get('/:todoGroupId', wrapAsync(todoGroupsController.show))
+  .patch('/:todoGroupId', wrapAsync(todoGroupsController.update))
+  .put('/:todoGroupId', wrapAsync(todoGroupsController.update))
+  .delete('/:todoGroupId', wrapAsync(todoGroupsController.destroy));
