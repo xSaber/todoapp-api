@@ -1,5 +1,5 @@
 const models = require('../../database/models');
-const mapper = require('../mappers').todos;
+const mapper = require('../mappers').todoGroups;
 const NotFoundError = require('../errors').NotFoundError;
 
 module.exports = {
