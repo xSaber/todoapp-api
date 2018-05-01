@@ -29,4 +29,4 @@ for (const model of Object.keys(models)) {
 }
 
 models.sequelize = sequelize;
-export default models;
+module.exports = models;

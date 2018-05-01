@@ -1,8 +1,8 @@
-import models from '../../database/models';
-import { todoGroups as mapper } from '../mappers';
-import { NotFoundError } from '../errors';
+const models = require('../../database/models');
+const mapper = require('../mappers').todos;
+const NotFoundError = require('../errors').NotFoundError;
 
-export default {
+module.exports = {
   async create (req, res, next) {
     const { title } = req.body.todoGroup;
     const todoGroup = await models.TodoGroup.create({ title });

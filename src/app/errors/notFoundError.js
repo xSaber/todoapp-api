@@ -1,8 +1,10 @@
-import AppError from './appError';
+const AppError = require('./appError');
 
-export default class NotFoundError extends AppError {
+class NotFoundError extends AppError {
   constructor(message) {
     super(message);
     this.code = 404;
   }
 }
+
+module.exports = NotFoundError;

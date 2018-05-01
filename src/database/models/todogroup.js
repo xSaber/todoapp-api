@@ -1,7 +1,5 @@
-import {
-  Model,
-  DataTypes
-} from 'sequelize';
+const sequelize = require('sequelize');
+const { Model, DataTypes } = sequelize;
 
 module.exports = class TodoGroup extends Model {
   static init(sequelize) {

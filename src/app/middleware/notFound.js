@@ -1,6 +1,6 @@
-import { NotFoundError } from '~/app/errors';
+const NotFoundError = require('../errors');
 
-export default (req, res, next) => {
+module.exports = (req, res, next) => {
   const error = new NotFoundError('Page not found');
   next(error);
 };

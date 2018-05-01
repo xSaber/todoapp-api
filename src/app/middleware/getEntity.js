@@ -1,7 +1,7 @@
-import models from '../../database/models';
-import { NotFoundError } from '../errors';
+const models = require('../../database/models');
+const NotFoundError = require('../errors').NotFoundError;
 
-export const getTodoGroup = async (req, res, next, id) => {
+const getTodoGroup = async (req, res, next, id) => {
   const todoGroup = await models.TodoGroup.findById(id);
 
   if (!todoGroup) {
@@ -10,9 +10,9 @@ export const getTodoGroup = async (req, res, next, id) => {
 
   res.locals.todoGroup = todoGroup;
   next();
-}
+};
 
-export const getTodo = async (req, res, next, id) => {
+const getTodo = async (req, res, next, id) => {
   const todo = await models.Todo.findById(id);
 
   if (!todo) {
@@ -21,4 +21,9 @@ export const getTodo = async (req, res, next, id) => {
 
   res.locals.todo = todo;
   next();
-}
+};
+
+module.exports = {
+  getTodoGroup,
+  getTodo
+};

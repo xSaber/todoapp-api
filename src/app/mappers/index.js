@@ -1,2 +1,7 @@
-export { default as todos } from './todos';
-export { default as todoGroups } from './todoGroups';
+const todos = require('./todos');
+const todoGroups = require('./todoGroups');
+
+module.exports = {
+  todos,
+  todoGroups
+};

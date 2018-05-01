@@ -1,10 +1,10 @@
-import {} from 'dotenv/config';
-import express from 'express';
-import bodyParser from 'body-parser';
-import logger from 'morgan';
+require('dotenv/config');
+const express = require('express');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
 
-import * as middleware from '~/app/middleware';
-import rootRouter from '~/app/routes';
+const middleware = require('./middleware');
+const rootRouter = require('./routes');
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -19,3 +19,5 @@ app.use(middleware.notFound);
 app.use(middleware.error);
 
 app.listen(port, () => console.info(`Example app listening on port ${port}!`));
+
+module.exports = app;

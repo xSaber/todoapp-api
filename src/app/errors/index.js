@@ -1,2 +1,7 @@
-export { default as AppError } from './notFoundError';
-export { default as NotFoundError } from './notFoundError';
+const AppError = require('./appError');
+const NotFoundError = require('./notFoundError');
+
+module.exports = {
+  AppError,
+  NotFoundError
+};
