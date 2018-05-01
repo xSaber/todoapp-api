@@ -3,7 +3,7 @@ const renderOne = todoGroup => ({
   title: todoGroup.title
 });
 
-export default {
+module.exports = {
   mapOne: todoGroup => ({
     todoGroup: renderOne(todoGroup)
   }),

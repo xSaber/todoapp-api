@@ -4,7 +4,7 @@ const renderOne = todo => ({
   complete: todo.complete
 });
 
-export default {
+module.exports = {
   mapOne: todo => ({
     todo: renderOne(todo)
   }),

@@ -1,10 +1,9 @@
-import models from '../../database/models';
-import { todos as mapper } from '../mappers';
-import { NotFoundError } from '../errors';
+const models = require('../../database/models');
+const mapper = require('../mappers').todos;
+const NotFoundError = require('../errors').NotFoundError;
 
-export default {
-
-  async create(req, res, next) {
+module.exports = {
+  async create (req, res, next) {
     const { title } = req.body.todo;
     const { todoGroupId } = req.params;
     const todo = await models.Todo.create({ todoGroupId, content: title });
@@ -15,8 +14,8 @@ export default {
 
   async index(req, res, next) {
     const todos = await models.Todo.findAll({
-      where  : { todoGroupId: req.params.todoGroupId },
-      order  : [['createdAt', 'DESC']]
+      where: { todoGroupId: req.params.todoGroupId },
+      order: [['createdAt', 'DESC']]
     });
 
     const data = mapper.mapMany(todos);

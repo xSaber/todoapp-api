@@ -11,13 +11,13 @@
  *
  */
 
-import { Router } from 'express';
-import todoGroupsRouter from './todoGroups';
-import todosRouter from './todos';
+const Router = require('express').Router;
+const todoGroupsRouter = require('./todoGroups');
+const todosRouter = require('./todos');
 
 const rootRouter = Router();
 
 rootRouter.use('/todo-groups', todoGroupsRouter);
 todoGroupsRouter.use('/:todoGroupId/todos', todosRouter);
 
-export default rootRouter;
+module.exports = rootRouter;

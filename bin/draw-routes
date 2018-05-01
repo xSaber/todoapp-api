@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+const app = require('../src/app');
+
+const createIndent = (level = 0) => (
+  '    '.repeat(level)
+);
+
+/**
+  Draws a route to a single action
+  @param {Route} route - route itself
+  @param {number} nestingLevel - level of nesting (for indent)
+*/
+const drawRoute = (route, nestingLevel = 0, parentPath = '') => {
+  const { path, methods } = route;
+
+  const method = Object.keys(methods).map(m => m.toUpperCase()).join(',');
+
+  console.log(createIndent(nestingLevel), method, path);
+};
+
+/**
+  Draws routes recursively.
+  @param {Layer} layer - root routing layer
+  @param {number} nestingLevel - level of nesting (for indent)
+*/
+const drawRoutes = (layer, nestingLevel = 0) => {
+  if (!layer) {
+    return;
+  }
+
+  const { handle, route, regexp } = layer;
+
+  if (route) {
+    drawRoute(route, nestingLevel + 1);
+    return;
+  } else {
+    console.log(createIndent(nestingLevel), regexp.toString());
+  }
+
+  const { stack } = handle;
+
+  if (!stack) {
+    return;
+  }
+
+  stack.forEach(nestedLayer => drawRoutes(nestedLayer, nestingLevel + 1));
+};
+
+const routerLayer = app._router.stack.find(layer => layer.name === 'router');
+drawRoutes(routerLayer);

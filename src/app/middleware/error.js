@@ -1,4 +1,4 @@
-export default (error, req, res, next) => {
+module.exports = (error, req, res, next) => {
   if (!(error instanceof Error )) {
     next(error);
   }

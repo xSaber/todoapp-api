@@ -1,4 +1,4 @@
-export default (func) => async (...args) => {
+module.exports = (func) => async (...args) => {
   // This hack with `...` operator is done for variable arguments number
   const next = args[2];
 
