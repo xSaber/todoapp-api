@@ -15,7 +15,7 @@
         "sequelize-cli": "^4.0.0"
     },
     "scripts": {
-        "start": "node --inspect src/app/index.js",
+        "start": "node --inspect src/index.js",
         "eslint": "node_modules/eslint/bin/eslint.js src/**",
         "development": "yarn run eslint && yarn start",
         "heroku-postbuild": "yarn run build",
